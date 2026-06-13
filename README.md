@@ -4,6 +4,10 @@
 
 Khetwise is a community-driven crop intelligence platform built specifically for Indian farmers. It moves beyond basic chatbots and weather apps to provide a complete end-to-end loop: detecting crop diseases, warning neighboring farmers of outbreaks, calculating exact irrigation needs using real agronomic data, and showing live market prices to maximize profit.
 
+<p align="center">
+  <img width="982" alt="Khetwise Dashboard" src="https://github.com/user-attachments/assets/848ce46f-91ab-4c5d-a4d9-2a10cd143837" />
+</p>
+
 ---
 
 ## ✨ Core Features
@@ -12,17 +16,25 @@ Khetwise is a community-driven crop intelligence platform built specifically for
 Instead of fighting diseases alone, Khetwise connects farmers. When a disease is detected by any user on the platform, it instantly appears as a red dot on the **Pest Outbreak Heatmap** for everyone else in a 100km radius. 
 * **Term to know:** *Heatmap* — A visual map showing where diseases are spreading, with color-coded risk levels based on how recent and how close the outbreak is.
 
+<img width="1127" alt="Pest Outbreak Heatmap" src="https://github.com/user-attachments/assets/c614503a-bc40-467d-8723-c83dde426d80" />
+
 ### 📸 2. AI Disease Detection
 Take a photo of a sick leaf, and our AI (powered by Google Gemini Vision) analyzes it in seconds. 
 * **How it works:** It identifies the exact disease, gives a confidence score, and provides a 2-3 step actionable treatment plan. It also provides direct links to buy the necessary treatments online (e.g., DeHaat, BigHaat).
+
+<img width="950" alt="AI Disease Detection" src="https://github.com/user-attachments/assets/fcca5d66-c263-461d-a898-dd4b3e450ed3" />
 
 ### 💧 3. Real ET0-Based Irrigation Advisor
 Most apps just say "It will rain tomorrow." Khetwise does the math. 
 * **Term to know:** *ET0 (Evapotranspiration)* — The exact amount of water evaporating from the soil and sweating from the plant. 
 * **How it works:** We calculate your field's exact daily water deficit (ET0 × Crop Factor - Rainfall) and tell you exactly how many liters of water to pump, preventing over-watering and saving electricity costs.
 
+<img width="1126" alt="ET0 Irrigation Advisor" src="https://github.com/user-attachments/assets/cf36ea0f-4ba5-4e33-baa1-8ccbbce2f631" />
+
 ### 📈 4. Market Intelligence
 Don't settle for the middleman's price. Select your crop, and Khetwise compares the local Mandi (market) price with the nearest major market. It calculates your potential extra income so you know exactly where to transport your harvest for maximum profit.
+
+<img width="1157" alt="Market Intelligence" src="https://github.com/user-attachments/assets/63b551da-5733-4991-8fb3-baa9bc1c8053" />
 
 ### 🎙️ 5. Voice Assistant
 Typing is slow. Farmers can tap a button and speak/type questions like *"Should I irrigate today?"* or *"How do I treat Blossom End Rot?"*. The AI responds instantly and reads the answer aloud using the built-in Voice Assistant.
