@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ── Colors ── */
+  --bg:              #FFFFFF;
+  --surface:         #FAFAFA;
+  --border:          #E5E5E5;
+  --border-strong:   #D4D4D4;
+
+  --text-primary:    #0A0A0A;
+  --text-secondary:  #737373;
+  --text-muted:      #A3A3A3;
+
+  --accent:          #FF5722;
+  --accent-hover:    #E64A19;
+  --accent-light:    #FFF3F0;
+
+  --alert-red:       #EF4444;
+  --alert-yellow:    #F59E0B;
+  --success:         #22C55E;
+
+  --code:            #171717;
+
+  /* ── Typography ── */
+  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', 'Courier New', monospace;
+
+  /* ── Spacing ── */
+  --radius-card:   8px;
+  --radius-btn:    6px;
+  --radius-badge:  999px;
+  --shadow-card:   0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Mono numbers everywhere ── */
+.mono { font-family: var(--font-mono); }
+
+/* ── Page title ── */
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+.btn-secondary:hover {
+  border-color: var(--border-strong);
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+}
+.badge-healthy  { background: #F0FDF4; color: #16A34A; }
+.badge-stressed { background: #FFF7ED; color: #EA580C; }
+.badge-alert    { background: #FEF2F2; color: #DC2626; }
+.badge-pending  { background: #F5F5F5; color: #737373; }
+
+/* ── Divider ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+/* ── Stat block ── */
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+/* ── Alert banner ── */
+.alert-banner {
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* ── Input ── */
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.input::placeholder { color: var(--text-muted); }
+.input:focus { border-color: var(--border-strong); }
+
+/* ── Section label ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Confidence bar ── */
+.confidence-bar-track {
+  height: 6px;
+  background: var(--surface);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.confidence-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 600ms ease;
+}
