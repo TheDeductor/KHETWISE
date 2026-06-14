@@ -7,17 +7,33 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const hasField = localStorage.getItem("field_id");
-    if (hasField) {
+    // Fresh prototype — always check onboarding_complete, not legacy field_id
+    const done = localStorage.getItem("onboarding_complete");
+    if (done === "true") {
       router.push("/dashboard");
     } else {
-      router.push("/field");
+      // Clear any stale legacy data so onboarding starts clean
+      localStorage.clear();
+      router.push("/onboarding");
     }
   }, [router]);
 
   return (
-    <div className="flex items-center justify-center h-[60vh]">
-      <p className="text-sm text-[#A3A3A3]">Loading Khetwise...</p>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background: "var(--bg)",
+        gap: 16,
+      }}
+    >
+      <div style={{ fontSize: 40 }}>🌾</div>
+      <p style={{ fontSize: 14, color: "var(--text-muted)", fontWeight: 500 }}>
+        Loading Khetwise…
+      </p>
     </div>
   );
 }

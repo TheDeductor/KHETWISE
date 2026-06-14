@@ -5,9 +5,9 @@ import type { OutbreakPoint } from "@/services/api";
 
 // Color map: recency → Leaflet circle color
 const COLOR_MAP = {
-  red:    "#EF4444",
-  yellow: "#F59E0B",
-  green:  "#22C55E",
+  red:    "#DC2626",
+  yellow: "#D97706",
+  green:  "#15803D",
 } as const;
 
 interface Props {
@@ -52,14 +52,14 @@ export default function OutbreakMap({
 
       // Farmer's field marker (home pin)
       L.circleMarker([centerLat, centerLon], {
-        radius: 8,
-        color: "#FF5722",
-        fillColor: "#FF5722",
+        radius: 9,
+        color: "#D97706",
+        fillColor: "#D97706",
         fillOpacity: 1,
-        weight: 2,
+        weight: 3,
       })
         .addTo(map)
-        .bindPopup("<b>Your Field</b>");
+        .bindPopup("<b>🌾 Your Field</b>");
 
       // Outbreak markers
       outbreaks.forEach((o) => {
@@ -104,8 +104,14 @@ export default function OutbreakMap({
       />
       <div
         ref={mapRef}
-        className="w-full rounded-lg border border-[#E5E5E5] overflow-hidden"
-        style={{ height: 420 }}
+        style={{
+          width: "100%",
+          height: 420,
+          borderRadius: "var(--radius-lg)",
+          border: "1px solid var(--border)",
+          overflow: "hidden",
+          boxShadow: "var(--shadow-sm)",
+        }}
       />
     </>
   );

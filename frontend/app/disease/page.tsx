@@ -2,42 +2,55 @@
 
 import { useState, useRef } from "react";
 import { predictDisease, type DiseaseResult } from "@/services/api";
+import { useLanguage, t } from "@/lib/i18n";
+import GlossaryTooltip from "@/components/GlossaryTooltip";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULT_FIELD_ID = "demo-field-001";
-const CROPS = ["Cotton", "Tomato", "Wheat", "Rice", "Maize"];
+const CROPS = ["Cotton", "Tomato", "Wheat", "Rice", "Maize", "Groundnut", "Sugarcane", "Soybean"];
 
 const BUY_LINKS = [
   {
     name: "DeHaat",
     url: "https://app.dehaat.com",
-    desc: "Order online — 24hr delivery in Gujarat",
-    logo: "D",
-    logoBg: "bg-[#16A34A]",
+    desc: "Order online — 24hr delivery",
+    logoBg: "#15803D",
+    emoji: "🌿",
   },
   {
     name: "BigHaat",
     url: "https://www.bighaat.com",
     desc: "Compare prices across brands",
-    logo: "B",
-    logoBg: "bg-[#FF5722]",
+    logoBg: "#D97706",
+    emoji: "🛒",
   },
 ];
 
 export default function DiseasePage() {
-  const [selectedCrop, setSelectedCrop] = useState("Cotton");
+  const lang = useLanguage();
+  const [selectedCrop, setSelectedCrop] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DiseaseResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Read crop from onboarding data if available
   const fieldId =
     typeof window !== "undefined"
       ? localStorage.getItem("field_id") || DEFAULT_FIELD_ID
       : DEFAULT_FIELD_ID;
+
+  const storedCrop =
+    typeof window !== "undefined"
+      ? localStorage.getItem("field_crop") || "Cotton"
+      : "Cotton";
+
+  // If no crop selected yet, default to stored
+  const activeCrop = selectedCrop || storedCrop;
 
   function handleFile(f: File) {
     setFile(f);
@@ -54,6 +67,7 @@ export default function DiseasePage() {
 
   function onDrop(e: React.DragEvent) {
     e.preventDefault();
+    setDragging(false);
     if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
   }
 
@@ -63,7 +77,7 @@ export default function DiseasePage() {
     setError(null);
     setResult(null);
     try {
-      const res = await predictDisease(file, fieldId, selectedCrop);
+      const res = await predictDisease(file, fieldId, activeCrop);
       setResult(res);
     } catch {
       setError("Analysis failed. Check your internet connection and try again.");
@@ -75,26 +89,32 @@ export default function DiseasePage() {
   const isHealthy = result?.disease?.toLowerCase() === "healthy";
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 640 }}>
       {/* Header */}
-      <div>
-        <h1 className="page-title">AI Disease Detection</h1>
-        <p className="page-subtitle">Upload a leaf photo — Gemini Vision identifies the disease in seconds</p>
+      <div className="animate-fade-in">
+        <h1 className="page-title">{t(lang, "disease_title")}</h1>
+        <p className="page-subtitle">
+          {t(lang, "disease_subtitle")}
+        </p>
       </div>
 
       {/* Crop selector */}
-      <div>
-        <p className="section-label mb-2">Crop</p>
-        <div className="flex gap-2 flex-wrap">
+      <div className="animate-slide-up">
+        <p className="section-label" style={{ marginBottom: 10 }}>{t(lang, "select_crop")}</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {CROPS.map((c) => (
             <button
               key={c}
               onClick={() => setSelectedCrop(c)}
-              className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-150 ${
-                selectedCrop === c
-                  ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
-                  : "bg-white text-[#737373] border-[#E5E5E5] hover:border-[#D4D4D4] hover:text-[#0A0A0A]"
-              }`}
+              className="option-pill"
+              style={{
+                background: activeCrop === c ? "var(--accent)" : "var(--bg)",
+                borderColor: activeCrop === c ? "var(--accent)" : "var(--border)",
+                color: activeCrop === c ? "#fff" : "var(--text-secondary)",
+                boxShadow: activeCrop === c ? "var(--shadow-accent)" : "none",
+                padding: "7px 14px",
+                borderRadius: "var(--radius-full)",
+              }}
             >
               {c}
             </button>
@@ -105,133 +125,237 @@ export default function DiseasePage() {
       {/* Upload zone */}
       <div
         onDrop={onDrop}
-        onDragOver={(e) => e.preventDefault()}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
         onClick={() => inputRef.current?.click()}
-        className="border border-dashed border-[#D4D4D4] rounded-lg p-8 text-center cursor-pointer hover:border-[#FF5722] hover:bg-[#FFF3F0] transition-colors duration-150"
+        className="animate-slide-up"
+        style={{
+          border: `2px dashed ${dragging ? "var(--accent)" : "var(--border-strong)"}`,
+          borderRadius: "var(--radius-lg)",
+          padding: 32,
+          textAlign: "center",
+          cursor: "pointer",
+          background: dragging ? "var(--accent-light)" : "var(--surface)",
+          transition: "all 200ms ease",
+          animationDelay: "60ms",
+        }}
       >
         <input
           ref={inputRef}
           type="file"
           accept="image/*"
-          className="hidden"
+          style={{ display: "none" }}
           onChange={onInputChange}
         />
         {preview ? (
           <img
             src={preview}
             alt="Leaf preview"
-            className="mx-auto max-h-48 rounded-lg object-contain"
+            style={{ maxHeight: 200, borderRadius: 12, objectFit: "contain", margin: "0 auto", display: "block" }}
           />
         ) : (
-          <div className="space-y-2">
-            <p className="text-3xl">🌿</p>
-            <p className="text-sm font-medium text-[#0A0A0A]">Drop a leaf image here</p>
-            <p className="text-xs text-[#A3A3A3]">or click to browse — JPG, PNG, WEBP</p>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 16,
+                background: "var(--accent-light)",
+                border: "1px solid #FDE68A",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 28,
+              }}
+            >
+              🌿
+            </div>
+            <div>
+              <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
+                {t(lang, "drop_photo")}
+              </p>
+              <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                {t(lang, "tap_browse")}
+              </p>
+            </div>
           </div>
         )}
       </div>
 
+      {/* Analyze button */}
       {preview && (
-        <button
-          onClick={handleAnalyze}
-          disabled={loading}
-          className="btn-primary w-full"
-          id="analyze-btn"
-        >
-          {loading ? (
-            <span className="flex items-center gap-2">
-              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-              Analyzing with Gemini…
-            </span>
-          ) : (
-            "Analyze Disease"
-          )}
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            onClick={handleAnalyze}
+            disabled={loading}
+            className="btn-primary"
+            id="analyze-btn"
+            style={{ flex: 1 }}
+          >
+            {loading ? (
+              <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: "50%",
+                    border: "2px solid rgba(255,255,255,0.3)",
+                    borderTopColor: "#fff",
+                    display: "inline-block",
+                    animation: "spin-slow 0.8s linear infinite",
+                  }}
+                />
+                {t(lang, "analyzing")}
+              </span>
+            ) : (
+              t(lang, "analyze_btn")
+            )}
+          </button>
+          <button
+            onClick={() => { setFile(null); setPreview(null); setResult(null); }}
+            className="btn-secondary"
+          >
+            {t(lang, "clear_btn")}
+          </button>
+        </div>
       )}
 
+      {/* Error */}
       {error && (
-        <div className="alert-banner">
-          <span>⚠</span>
-          <p className="text-sm text-[#0A0A0A]">{error}</p>
+        <div className="alert-banner-danger animate-slide-up">
+          <span style={{ fontSize: 18 }}>⚠️</span>
+          <p style={{ fontSize: 13, color: "var(--text-primary)" }}>{error}</p>
         </div>
       )}
 
       {/* Result card */}
       {result && (
-        <div className="space-y-4">
-          <div className="card">
-            <div className="flex items-start justify-between mb-4">
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }} className="animate-slide-up">
+          <div className="card-elevated">
+            {/* Status badge + name */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
-                <p className="section-label">Diagnosis</p>
-                <h2 className="text-xl font-semibold text-[#0A0A0A] mt-1">{result.disease}</h2>
+                <p className="section-label" style={{ marginBottom: 4 }}>{t(lang, "diagnosis")}</p>
+                <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-primary)" }}>
+                  <GlossaryTooltip term={result.disease}>{result.disease}</GlossaryTooltip>
+                </h2>
               </div>
               <span
-                className={`badge ${
-                  isHealthy ? "badge-healthy" : "badge-alert"
-                }`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: "4px 10px",
+                  borderRadius: 999,
+                  background: isHealthy ? "var(--success-bg)" : "var(--danger-bg)",
+                  color: isHealthy ? "var(--success)" : "var(--danger)",
+                  border: `1px solid ${isHealthy ? "var(--success-border)" : "var(--danger-border)"}`,
+                  flexShrink: 0,
+                }}
               >
                 <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    isHealthy ? "bg-[#22C55E]" : "bg-[#EF4444]"
-                  }`}
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: isHealthy ? "var(--success)" : "var(--danger)",
+                    display: "inline-block",
+                  }}
                 />
                 {isHealthy ? "Healthy" : "Disease Detected"}
               </span>
             </div>
 
             {/* Confidence bar */}
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-1">
-                <span className="section-label">Confidence</span>
-                <span className="font-mono text-sm font-medium text-[#0A0A0A]">
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span className="section-label">
+                  <GlossaryTooltip term="Confidence">{t(lang, "ai_confidence" ) || "AI Confidence"}</GlossaryTooltip>
+                </span>
+                <span style={{ fontSize: 13, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                   {result.confidence}%
                 </span>
               </div>
               <div className="confidence-bar-track">
-                <div
-                  className="confidence-bar-fill"
-                  style={{ width: `${result.confidence}%` }}
-                />
+                <div className="confidence-bar-fill" style={{ width: `${result.confidence}%` }} />
               </div>
             </div>
 
-            <hr className="divider mb-4" />
+            <div className="divider" style={{ margin: "16px 0" }} />
 
             {/* Treatment */}
             {!isHealthy && (
               <div>
-                <p className="section-label mb-2">Treatment</p>
-                <p className="text-sm text-[#0A0A0A] leading-relaxed">{result.treatment}</p>
+                <p className="section-label" style={{ marginBottom: 8 }}>{t(lang, "recommended_treatment")}</p>
+                <p style={{ fontSize: 14, color: "var(--text-primary)", lineHeight: 1.65 }}>
+                  {result.treatment}
+                </p>
+              </div>
+            )}
+
+            {isHealthy && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: "var(--success-bg)", borderRadius: "var(--radius-sm)", border: "1px solid var(--success-border)" }}>
+                <span style={{ fontSize: 20 }}>🌱</span>
+                <p style={{ fontSize: 13, color: "var(--success)", fontWeight: 600 }}>
+                  {t(lang, "healthy_msg")}
+                </p>
               </div>
             )}
           </div>
 
-          {/* Where to buy — only for diseased crops */}
+          {/* Buy treatment */}
           {!isHealthy && (
-            <div className="card">
-              <p className="section-label mb-3">Where to Buy Treatment</p>
-              <div className="space-y-3">
+            <div className="card-elevated">
+              <p className="section-label" style={{ marginBottom: 12 }}>{t(lang, "where_to_buy")}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {BUY_LINKS.map((link) => (
                   <a
                     key={link.name}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border border-[#E5E5E5] hover:border-[#D4D4D4] hover:bg-[#FAFAFA] transition-colors duration-150"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "12px 14px",
+                      borderRadius: "var(--radius)",
+                      border: "1.5px solid var(--border)",
+                      background: "var(--bg)",
+                      textDecoration: "none",
+                      transition: "all 150ms ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+                      (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                      (e.currentTarget as HTMLElement).style.background = "var(--bg)";
+                    }}
                   >
-                    <span
-                      className={`w-8 h-8 rounded-md ${link.logoBg} text-white text-sm font-bold flex items-center justify-center shrink-0`}
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        background: link.logoBg,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 16,
+                        flexShrink: 0,
+                      }}
                     >
-                      {link.logo}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#0A0A0A]">{link.name}</p>
-                      <p className="text-xs text-[#737373]">{link.desc}</p>
+                      {link.emoji}
                     </div>
-                    <span className="text-xs text-[#A3A3A3]">→</span>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 2 }}>{link.name}</p>
+                      <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{link.desc}</p>
+                    </div>
+                    <span style={{ fontSize: 16, color: "var(--text-muted)" }}>→</span>
                   </a>
                 ))}
               </div>

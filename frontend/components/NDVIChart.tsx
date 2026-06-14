@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   ReferenceLine,
   Tooltip,
   ResponsiveContainer,
-  Dot,
+  Area,
+  AreaChart,
 } from "recharts";
 import type { NdviPoint } from "@/services/api";
+import { t } from "@/lib/i18n";
 
 interface TooltipPayload {
   value: number;
@@ -27,54 +27,90 @@ function CustomTooltip({
   label?: string;
 }) {
   if (!active || !payload?.length) return null;
+  const val = payload[0].value;
+  const color = val >= 0.65 ? "var(--success)" : val >= 0.5 ? "var(--warning)" : "var(--danger)";
   return (
-    <div className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-      <p className="text-xs text-[#737373]">{label}</p>
-      <p className="text-sm font-mono font-medium text-[#0A0A0A]">
-        NDVI {payload[0].value.toFixed(2)}
+    <div
+      style={{
+        background: "var(--bg)",
+        border: "1px solid var(--border)",
+        borderRadius: 10,
+        padding: "8px 12px",
+        boxShadow: "var(--shadow-md)",
+      }}
+    >
+      <p style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>{label}</p>
+      <p style={{ fontSize: 14, fontFamily: "var(--font-mono)", fontWeight: 700, color }}>
+        NDVI {val.toFixed(2)}
       </p>
     </div>
   );
 }
 
-export default function NDVIChart({ history }: { history: NdviPoint[] }) {
-  const min = Math.min(...history.map((h) => h.ndvi)) - 0.05;
-  const max = Math.max(...history.map((h) => h.ndvi)) + 0.05;
+export default function NDVIChart({ history, lang = "en" }: { history: NdviPoint[]; lang?: string }) {
+  const latest = history[history.length - 1]?.ndvi ?? 0;
+  const prev = history[history.length - 2]?.ndvi ?? latest;
+  const delta = latest - prev;
+  const trend = delta > 0.01 ? "↑" : delta < -0.01 ? "↓" : "→";
+  const trendColor = delta > 0.01 ? "var(--success)" : delta < -0.01 ? "var(--danger)" : "var(--text-muted)";
+
+  const min = Math.max(0, Math.min(...history.map((h) => h.ndvi)) - 0.08);
+  const max = Math.min(1, Math.max(...history.map((h) => h.ndvi)) + 0.08);
 
   return (
-    <div className="bg-white border border-[#E5E5E5] rounded-lg p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-[#0A0A0A]">NDVI Trend</span>
-        <span className="text-xs text-[#A3A3A3] font-mono">7-day</span>
+    <div className="card-elevated animate-slide-up" style={{ animationDelay: "60ms" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-muted)", marginBottom: 4 }}>
+            {t(lang, "ndvi_trend")}
+          </p>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+            <span style={{ fontSize: 28, fontWeight: 700, fontFamily: "var(--font-mono)", color: "var(--text-primary)", lineHeight: 1 }}>
+              {latest.toFixed(2)}
+            </span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: trendColor }}>{trend}</span>
+          </div>
+        </div>
+        <span
+          style={{
+            fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 999,
+            background: "var(--surface-2)", color: "var(--accent-hover)", border: "1px solid #FDE68A",
+          }}
+        >
+          {t(lang, "ndvi_7day")}
+        </span>
       </div>
 
-      <ResponsiveContainer width="100%" height={180}>
-        <LineChart data={history} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="0" stroke="#F5F5F5" vertical={false} />
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={150}>
+        <AreaChart data={history} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+          <defs>
+            <linearGradient id="ndviGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%"  stopColor="#D97706" stopOpacity={0.18} />
+              <stop offset="95%" stopColor="#D97706" stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
 
-          {/* Stress threshold reference line */}
+          <CartesianGrid strokeDasharray="0" stroke="var(--border)" vertical={false} />
+
+          {/* Stress threshold */}
           <ReferenceLine
             y={0.62}
-            stroke="#E5E5E5"
+            stroke="var(--border-strong)"
             strokeDasharray="4 4"
-            label={{
-              value: "Stress",
-              position: "insideTopRight",
-              fontSize: 10,
-              fill: "#A3A3A3",
-              fontFamily: "monospace",
-            }}
+            label={{ value: t(lang, "stress_line"), position: "insideTopRight", fontSize: 9, fill: "var(--text-muted)" }}
           />
 
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 11, fill: "#A3A3A3", fontFamily: "monospace" }}
+            tick={{ fontSize: 10, fill: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            domain={[Math.max(0, min), Math.min(1, max)]}
-            tick={{ fontSize: 11, fill: "#A3A3A3", fontFamily: "monospace" }}
+            domain={[min, max]}
+            tick={{ fontSize: 10, fill: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(v: number) => v.toFixed(2)}
@@ -82,15 +118,16 @@ export default function NDVIChart({ history }: { history: NdviPoint[] }) {
 
           <Tooltip content={<CustomTooltip />} />
 
-          <Line
+          <Area
             type="monotone"
             dataKey="ndvi"
-            stroke="#FF5722"
-            strokeWidth={2}
-            dot={<Dot r={4} fill="#FF5722" stroke="#ffffff" strokeWidth={2} />}
-            activeDot={{ r: 5, fill: "#FF5722", stroke: "#ffffff", strokeWidth: 2 }}
+            stroke="#D97706"
+            strokeWidth={2.5}
+            fill="url(#ndviGradient)"
+            dot={{ r: 3, fill: "#D97706", stroke: "var(--bg)", strokeWidth: 2 }}
+            activeDot={{ r: 5, fill: "#D97706", stroke: "var(--bg)", strokeWidth: 2 }}
           />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

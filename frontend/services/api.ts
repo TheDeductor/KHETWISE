@@ -16,6 +16,21 @@ export interface RegisterFieldPayload {
   longitude: number;
   area_acres: number;
   user_name: string;
+  // Extended onboarding fields (all optional)
+  soil_type?: string;
+  water_source?: string;
+  farmer_type?: string;
+  experience_years?: number;
+  phone?: string;
+  num_plots?: number;
+  language?: string;
+  location_label?: string;
+  state?: string;
+  district?: string;
+  all_crops?: string;
+  growth_stage?: string;
+  sowing_date?: string;
+  current_issue?: string;
 }
 
 export async function registerField(payload: RegisterFieldPayload) {
@@ -108,6 +123,18 @@ export interface MarketData {
   profit_increase: number;
   total_extra_income: number;
   recommendation: string;
+  price_trend: number[];
+  best_time_to_sell: string;
+  sell_badge_color: string;
+  mandi_distance_km: number;
+  transport_cost_inr: number;
+  net_extra_income: number;
+  // MSP fields
+  msp_per_kg: number | null;
+  msp_per_quintal: number | null;
+  msp_diff_pct: number | null;
+  msp_status: "below" | "above" | "great" | "none";
+  msp_message: string;
 }
 
 export async function getMarket(crop: string, areaAcres = 2.5): Promise<MarketData> {
