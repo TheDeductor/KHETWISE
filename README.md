@@ -398,18 +398,7 @@ Potential improvements include:
 - Offline support for areas with limited internet connectivity.
 - Expanded regional language and voice support.
 
----
 
-## Team
-
-| Name | Role |
-|---|---|
-| [Team Member 1] | [Contribution] |
-| [Team Member 2] | [Contribution] |
-| [Team Member 3] | [Contribution] |
-| [Team Member 4] | [Contribution] |
-
----
 
 ## License
 
