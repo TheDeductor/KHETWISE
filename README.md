@@ -1,104 +1,420 @@
-# 🌾 Khetwise
+# KHETWISE
 
-**We tell you what's attacking crops near you before it reaches yours — and when to sell for maximum price.**
+### An AI-powered agricultural intelligence platform for smarter, data-driven farming.
 
-Khetwise is a community-driven crop intelligence platform built specifically for Indian farmers. It moves beyond basic chatbots and weather apps to provide a complete end-to-end loop: detecting crop diseases, warning neighboring farmers of outbreaks, calculating exact irrigation needs using real agronomic data, and showing live market prices to maximize profit.
+KHETWISE helps farmers make informed decisions through AI-assisted crop disease detection, weather-based irrigation recommendations, agricultural market insights, and regional disease outbreak monitoring.
 
-<p align="center">
-  <img width="982" alt="Khetwise Dashboard" src="https://github.com/user-attachments/assets/848ce46f-91ab-4c5d-a4d9-2a10cd143837" />
-</p>
+The platform combines a Next.js frontend, FastAPI backend, Google Gemini, Supabase, and weather data to provide an integrated agricultural decision-support system.
 
 ---
 
-## ✨ Core Features
+## Overview
 
-### 🐛 1. Community Outbreak Heatmap
-Instead of fighting diseases alone, Khetwise connects farmers. When a disease is detected by any user on the platform, it instantly appears as a red dot on the **Pest Outbreak Heatmap** for everyone else in a 100km radius. 
-* **Term to know:** *Heatmap* — A visual map showing where diseases are spreading, with color-coded risk levels based on how recent and how close the outbreak is.
+Agriculture involves decisions that directly affect crop health, water consumption, and farmer income. However, access to timely agricultural information and actionable recommendations remains a challenge.
 
-<img width="1127" alt="Pest Outbreak Heatmap" src="https://github.com/user-attachments/assets/c614503a-bc40-467d-8723-c83dde426d80" />
+KHETWISE addresses this by bringing multiple agricultural tools into a single platform, allowing farmers to monitor their fields, identify potential crop diseases, plan irrigation, and explore market information.
 
-### 📸 2. AI Disease Detection
-Take a photo of a sick leaf, and our AI (powered by Google Gemini Vision) analyzes it in seconds. 
-* **How it works:** It identifies the exact disease, gives a confidence score, and provides a 2-3 step actionable treatment plan. It also provides direct links to buy the necessary treatments online (e.g., DeHaat, BigHaat).
+## Key Features
 
-<img width="950" alt="AI Disease Detection" src="https://github.com/user-attachments/assets/fcca5d66-c263-461d-a898-dd4b3e450ed3" />
+| Feature | Description |
+|---|---|
+| AI Disease Detection | Analyses crop images using Google Gemini to identify potential diseases and provide treatment recommendations. |
+| Field Management | Allows farmers to register fields with crop, soil, location, and other agricultural details. |
+| Irrigation Recommendations | Uses weather forecasts and reference evapotranspiration data to generate irrigation guidance. |
+| Market Intelligence | Provides indicative crop prices, market comparisons, and estimated transportation considerations. |
+| Disease Outbreak Monitoring | Displays reported disease cases geographically and identifies nearby outbreak risks. |
+| Voice Assistant | Enables farmers to interact with the platform through voice-based queries. |
+| Multilingual Interface | Supports English, Hindi, Telugu, Tamil, Bengali, and Marathi. |
+| Field Health Dashboard | Presents field information, health indicators, and historical demonstration data. |
 
-### 💧 3. Real ET0-Based Irrigation Advisor
-Most apps just say "It will rain tomorrow." Khetwise does the math. 
-* **Term to know:** *ET0 (Evapotranspiration)* — The exact amount of water evaporating from the soil and sweating from the plant. 
-* **How it works:** We calculate your field's exact daily water deficit (ET0 × Crop Factor - Rainfall) and tell you exactly how many liters of water to pump, preventing over-watering and saving electricity costs.
+## Application Screenshots
 
-<img width="1126" alt="ET0 Irrigation Advisor" src="https://github.com/user-attachments/assets/cf36ea0f-4ba5-4e33-baa1-8ccbbce2f631" />
+### Dashboard
 
-### 📈 4. Market Intelligence
-Don't settle for the middleman's price. Select your crop, and Khetwise compares the local Mandi (market) price with the nearest major market. It calculates your potential extra income so you know exactly where to transport your harvest for maximum profit.
+![KHETWISE Dashboard](https://github.com/user-attachments/assets/848ce46f-91ab-4c5d-a4d9-2a10cd143837)
 
-<img width="1157" alt="Market Intelligence" src="https://github.com/user-attachments/assets/63b551da-5733-4991-8fb3-baa9bc1c8053" />
+### Disease Detection
 
-### 🎙️ 5. Voice Assistant
-Typing is slow. Farmers can tap a button and speak/type questions like *"Should I irrigate today?"* or *"How do I treat Blossom End Rot?"*. The AI responds instantly and reads the answer aloud using the built-in Voice Assistant.
+![Disease Detection](https://github.com/user-attachments/assets/fcca5d66-c263-461d-a898-dd4b3e450ed3)
+
+### Irrigation Recommendations
+
+![Irrigation](https://github.com/user-attachments/assets/cf36ea0f-4ba5-4e33-baa1-8ccbbce2f631)
+
+### Disease Outbreak Monitoring
+
+![Outbreak Map](https://github.com/user-attachments/assets/c614503a-bc40-467d-8723-c83dde426d80)
+
+### Market Intelligence
+
+![Market Intelligence](https://github.com/user-attachments/assets/63b551da-5733-4991-8fb3-baa9bc1c8053)
 
 ---
 
-## 🛠️ Tech Stack
+## System Architecture
 
-This project is built using a modern, scalable architecture:
+KHETWISE follows a client-server architecture. The frontend communicates with a FastAPI backend, which coordinates AI inference, weather data retrieval, and database operations.
 
-* **Frontend:** Next.js 14, React, Tailwind CSS, Recharts (for graphs), Leaflet (for maps).
-* **Backend:** FastAPI (Python), Uvicorn.
-* **Database:** Supabase (PostgreSQL) for real-time syncing of fields and disease reports.
-* **AI & Data:** Google Gemini 2.5 Flash (for image analysis and voice responses), Open-Meteo API (for real-time weather and ET0 data).
+```mermaid
+flowchart TD
+    A["Farmer"] --> B["Next.js Frontend"]
+    B --> C["FastAPI Backend"]
+
+    C --> D["Gemini AI Service"]
+    C --> E["Weather Service"]
+    C --> F["Supabase Database"]
+
+    D --> G["Disease Detection"]
+    D --> H["Voice Assistant"]
+
+    E --> I["Weather Forecast"]
+    I --> J["Irrigation Recommendations"]
+
+    F --> K["Field Information"]
+    F --> L["Disease Reports"]
+
+    C --> M["Market Intelligence"]
+    C --> N["Outbreak Monitoring"]
+```
+
+### Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | Next.js 14, React 18, TypeScript |
+| Styling | Tailwind CSS |
+| Backend | Python, FastAPI |
+| AI Integration | Google Gemini API |
+| Database | Supabase |
+| Weather Data | Open-Meteo API |
+| Maps | Leaflet, React Leaflet |
+| Data Visualization | Recharts |
+| Deployment | Vercel, Render |
+
+## Technical Implementation
+
+### 1. AI-Based Disease Detection
+
+The disease detection workflow accepts crop images and processes them before sending them to the Gemini API.
+
+```mermaid
+flowchart TD
+    A["Upload Crop Image"] --> B["Image Preprocessing"]
+    B --> C["Gemini API"]
+    C --> D["Structured JSON Response"]
+    D --> E["Disease and Confidence"]
+    D --> F["Treatment Recommendations"]
+    E --> G["Display Results"]
+    F --> G
+    G --> H["Store Disease Report"]
+```
+
+Implementation details:
+
+- Images are converted to RGB format using Pillow.
+- Image dimensions are reduced to a maximum of 640 × 640 pixels.
+- JPEG compression is applied before API submission.
+- Gemini is instructed to return structured JSON containing disease information, confidence, and treatment recommendations.
+- API errors, quota limitations, and invalid responses are handled through fallback logic.
+- Non-healthy disease reports are stored in Supabase.
+
+### 2. Weather-Based Irrigation
+
+The irrigation module uses weather information and reference evapotranspiration to generate irrigation guidance.
+
+The backend retrieves:
+
+- Daily precipitation forecasts.
+- Reference evapotranspiration (ET₀).
+- Seven-day weather information.
+
+The data is retrieved from Open-Meteo and processed to support irrigation recommendations.
+
+### 3. Disease Outbreak Monitoring
+
+The outbreak module uses geographical coordinates to identify reported disease cases near a farmer's location.
+
+Implementation details:
+
+- Uses the Haversine formula to calculate geographical distances.
+- Considers reports from the previous 30 days.
+- Uses a configurable monitoring radius, with a default of 100 km.
+- Applies a 50 km proximity threshold for outbreak alerts.
+- Displays reported cases through an interactive map.
+
+### 4. Multilingual Voice Assistant
+
+The voice assistant integrates browser-based speech capabilities with Gemini.
+
+The workflow supports voice input, language-aware query processing, and generated responses. The frontend uses browser speech recognition and text-to-speech capabilities where supported.
+
+### 5. Database Integration
+
+Supabase is used for persistent storage of field information and disease reports.
+
+The database schema includes:
+
+- `users`
+- `fields`
+- `health_reports`
+- `disease_reports`
+
+The backend communicates with Supabase using server-side credentials.
 
 ---
 
-## 🚀 Running Khetwise Locally
+## Project Structure
+
+```text
+KHETWISE/
+│
+├── backend/
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── seed.py
+│   │
+│   ├── db/
+│   │   └── supabase_client.py
+│   │
+│   ├── routes/
+│   │   ├── field.py
+│   │   ├── disease.py
+│   │   ├── health.py
+│   │   ├── irrigation.py
+│   │   ├── market.py
+│   │   ├── voice.py
+│   │   └── outbreaks.py
+│   │
+│   └── services/
+│       ├── gemini.py
+│       └── weather.py
+│
+├── frontend/
+│   ├── app/
+│   │   ├── dashboard/
+│   │   ├── disease/
+│   │   ├── field/
+│   │   ├── irrigation/
+│   │   ├── market/
+│   │   ├── onboarding/
+│   │   └── outbreaks/
+│   │
+│   ├── components/
+│   │   ├── GlossaryTooltip.tsx
+│   │   ├── HealthCard.tsx
+│   │   ├── IrrigationSchedule.tsx
+│   │   ├── NDVIChart.tsx
+│   │   ├── Nav.tsx
+│   │   ├── OutbreakMap.tsx
+│   │   ├── StressAlert.tsx
+│   │   └── VoiceBox.tsx
+│   │
+│   ├── lib/
+│   │   ├── crops-data.ts
+│   │   ├── glossary.ts
+│   │   ├── i18n.ts
+│   │   ├── onboarding-store.ts
+│   │   └── utils.ts
+│   │
+│   └── services/
+│       ├── api.ts
+│       └── mock.ts
+│
+├── docs/
+│   └── supabase_schema.sql
+│
+├── render.yaml
+├── LICENSE
+└── README.md
+```
+
+---
+
+## Getting Started
 
 ### Prerequisites
-* Python 3.11+
-* Node.js 18+
-* A [Supabase](https://supabase.com/) account
-* A [Google AI Studio](https://aistudio.google.com/) API Key
 
-### 1. Database Setup
-1. Create a new Supabase project.
-2. Open the SQL Editor in Supabase.
-3. Copy and run the contents of `docs/supabase_schema.sql` to create the tables.
+Ensure the following are installed:
 
-### 2. Environment Variables
-Copy `.env.example` to a new file named `.env` in the root folder and add your keys:
+- Node.js 18 or later
+- Python 3.11 or later
+- npm
+- Git
+- A Supabase project
+- A Google Gemini API key
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/TheDeductor/KHETWISE.git
+
+cd KHETWISE
+```
+
+### 2. Configure Supabase
+
+1. Create a Supabase project.
+2. Open the SQL Editor.
+3. Execute the schema available at `docs/supabase_schema.sql`.
+4. Obtain the project URL and service role key from your Supabase project settings.
+
+### 3. Configure the Backend
+
+Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+Create a `.env` file:
+
 ```env
 GEMINI_API_KEY=your_gemini_api_key
-SUPABASE_URL=your_supabase_project_url
+GEMINI_MODEL=gemini-2.5-flash
+
+SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
-### 3. Start the Backend
-```bash
-cd backend
+Create and activate a virtual environment.
+
+**Windows:**
+
+```powershell
 python -m venv venv
-# Windows: .\venv\Scripts\activate | Mac/Linux: source venv/bin/activate
-pip install -r requirements.txt
-
-# (Optional) Seed the database with sample outbreak data
-python seed.py 
-
-# Start the API server
-uvicorn main:app --reload --port 8000
+venv\Scripts\activate
 ```
 
-### 4. Start the Frontend
-Open a new terminal window:
+**Linux/macOS:**
+
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the backend server:
+
+```bash
+uvicorn main:app --reload
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8000
+```
+
+API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+### 4. Configure the Frontend
+
+Open a separate terminal:
+
 ```bash
 cd frontend
+```
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Install dependencies:
+
+```bash
 npm install
-# Ensure .env.local exists with NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
-Visit **http://localhost:3000** in your browser!
+
+The frontend will be available at:
+
+```text
+http://localhost:3000
+```
 
 ---
 
-## 📄 License
+## API Reference
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The backend exposes the following endpoints:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/field/register` | Register a new field |
+| GET | `/api/field/{field_id}` | Retrieve field information |
+| POST | `/api/disease/predict` | Analyse a crop image |
+| GET | `/api/health` | Retrieve field health information |
+| GET | `/api/ndvi-history` | Retrieve NDVI history data |
+| GET | `/api/irrigation` | Retrieve irrigation recommendations |
+| GET | `/api/market` | Retrieve market information |
+| POST | `/api/voice/query` | Process a voice assistant query |
+| GET | `/api/outbreaks` | Retrieve disease outbreak information |
+
+Interactive API documentation is available through FastAPI Swagger UI at `/docs`.
+
+---
+
+## Current Limitations
+
+The following limitations are important when interpreting the application's output:
+
+- **NDVI and field health:** Currently uses demonstration data; live satellite imagery integration is not implemented.
+- **Market intelligence:** Uses predefined market data rather than a live mandi price feed.
+- **Irrigation:** Recommendations are estimates based on available weather and evapotranspiration inputs, not guaranteed water requirements.
+- **Authentication:** A complete user authentication and authorization system is not yet implemented.
+- **Outbreak reporting:** The reporting interface is not fully connected to backend report submission.
+- **Database policies:** Production-grade Row Level Security policies should be configured before handling real user data.
+- **Voice support:** Browser speech recognition and speech synthesis depend on browser capabilities and permissions.
+- **AI recommendations:** Disease identification and treatment suggestions should be verified with qualified agricultural experts before application.
+
+---
+
+## Future Scope
+
+Potential improvements include:
+
+- Integration with live satellite imagery for real-time crop health monitoring.
+- Live agricultural market price feeds.
+- More comprehensive crop disease datasets and validation.
+- User authentication and role-based access control.
+- Automated disease outbreak reporting and notification workflows.
+- More advanced irrigation models using soil moisture and crop growth stages.
+- Offline support for areas with limited internet connectivity.
+- Expanded regional language and voice support.
+
+---
+
+## Team
+
+| Name | Role |
+|---|---|
+| [Team Member 1] | [Contribution] |
+| [Team Member 2] | [Contribution] |
+| [Team Member 3] | [Contribution] |
+| [Team Member 4] | [Contribution] |
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+**KHETWISE** — Bringing agricultural intelligence and data-driven decision-making together.
